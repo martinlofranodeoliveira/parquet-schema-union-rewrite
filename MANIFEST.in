@@ -1,0 +1,8 @@
+include pyproject.toml requirements.lock MANIFEST.in Dockerfile
+include README.md README.pt-BR.md CHANGELOG.md CONTRIBUTING.md SECURITY.md LICENSE
+include .editorconfig .gitignore .dockerignore
+recursive-include parquet_union_replay *.py
+recursive-include tests *.py
+recursive-include docs *.md
+include .github/workflows/ci.yml
+global-exclude *.pyc

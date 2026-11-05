@@ -1,0 +1,39 @@
+name: bounded-offline-validation
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Explicit public-base dependency and package preparation
+        timeout-minutes: 12
+        run: docker build --platform linux/amd64 -t parquet-union-local .
+      - name: Non-root offline regression tests
+        timeout-minutes: 4
+        run: >-
+          docker run --rm --network none --cap-drop ALL
+          --security-opt no-new-privileges --pids-limit 256 --memory 1g --cpus 2
+          --read-only --tmpfs /tmp:rw,nosuid,nodev,size=256m
+          parquet-union-local python -m pytest -q
+      - name: Outside-checkout installed wheel demo
+        timeout-minutes: 2
+        run: >-
+          docker run --rm --network none --cap-drop ALL
+          --security-opt no-new-privileges --pids-limit 256 --memory 1g --cpus 2
+          --read-only --tmpfs /tmp:rw,nosuid,nodev,size=256m --workdir /tmp
+          parquet-union-local python -I -m parquet_union_replay demo --assert --json
+      - name: Outside-checkout source installation demo
+        timeout-minutes: 2
+        run: >-
+          docker run --rm --network none --cap-drop ALL
+          --security-opt no-new-privileges --pids-limit 256 --memory 1g --cpus 2
+          --read-only --tmpfs /tmp:rw,nosuid,nodev,size=256m --workdir /tmp
+          --env PYTHONPATH=/opt/source-install
+          parquet-union-local python -m parquet_union_replay demo --assert --json

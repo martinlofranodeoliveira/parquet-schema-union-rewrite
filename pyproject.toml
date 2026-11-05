@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools==84.2.1", "wheel==0.48.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "parquet-union-replay"
+version = "0.1.0"
+description = "Bounded synthetic Parquet schema union with provenance and independent DuckDB verification"
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+license = "MIT"
+authors = [{name = "Lofrano Tecnologia"}]
+dependencies = ["pyarrow==26.0.1", "duckdb==2.0.0"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3.13",
+  "Operating System :: POSIX :: Linux",
+]
+
+[project.optional-dependencies]
+test = ["pytest==9.2.0"]
+
+[project.urls]
+Homepage = "https://lofranotecnologia.com.br"
+Repository = "https://github.com/martinlofranodeoliveira/parquet-schema-union-rewrite"
+Issues = "https://github.com/martinlofranodeoliveira/parquet-schema-union-rewrite/issues"
+
+[project.scripts]
+parquet-union-replay = "parquet_union_replay.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["parquet_union_replay*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-p no:cacheprovider"
